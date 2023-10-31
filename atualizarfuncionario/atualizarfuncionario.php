@@ -30,7 +30,7 @@ session_start();
   }
   ?>
   <?php include_once("../navbar/navbar.php") ?>
-  <form action="salvarfuncionario.php" method="post" class="form">
+  <form action="atualizarfuncionarioaction.php" method="post" class="form">
     <?php
     if (!empty($_SESSION['errors'])) {
       echo "<div class='error-message'>";
@@ -46,6 +46,8 @@ session_start();
     $userFullname = $useGetEmployeeById["nome_usuario"] . " " . $useGetEmployeeById["sobrenome_usuario"];
     ?>
 
+    <input type="hidden" name="id_usuario" value=<?php echo "$useGetEmployeeById[id_usuario]"?>>
+    <input type="hidden" name="identificador" value=<?php echo "$useGetEmployeeById[identificador]"?>>
     <label for="nomefuncionario" class="form-label">Nome do funcionário</label><br>
     <input type="text" class="form-input" name="nome" required value=" <?php echo $userFullname; ?>"><br><br>
     <label for="identificador" class="form-label">CPF</label><br>

@@ -55,10 +55,39 @@ session_start();
     require_once('../endpoints/endpoints.php');
     require_once('../helpers/stringHelpers.php');
 
-    $useGetEmployees = getEmployees();
-    var_dump($useGetEmployees[0]["id_usuario"]);
+    $useGetProjects = getProjects();
+    var_dump($useGetProjects[0]["nm_projeto"]);
+
+    $projectFilter = isset($_GET["projeto"]) ? $_GET["projeto"] : "todos_projetos";
+    var_dump($projectFilter);
+
+    $useGetEmployeesByProject = null;
+    if ($projectFilter == "todos_projetos") {
+        $useGetEmployeesByProject = getEmployees();
+    } else {
+        $useGetEmployeesByProject = getEmployeesByProjectName($projectFilter);
+    }
+    
     ?>
     <?php include_once("../navbar/navbar.php") ?>
+
+    <form action="/projetosemestre/listafuncionarios/listafuncionarios.php" method="get">
+        <select name="projeto" class="form-select">
+            <option value="todos_projetos" selected>
+                <?php echo capitalize("Todos projetos") ?>
+            </option>
+            <?php
+            $selectedAttribute = "";
+            foreach ($useGetProjects as $project) {
+                if ($projectFilter == $project["nm_projeto"]) {
+                    $selectedAttribute = "selected";
+                }
+                echo "<option $selectedAttribute value='" . $project["nm_projeto"] . "'>" . capitalize($project["nm_projeto"]) . "</option>";
+            }
+            ?>
+        </select>
+        <button type="submit">Filtrar funcionários pelo projeto</button>
+    </form>
 
     <table class="table">
         <thead>
@@ -78,11 +107,10 @@ session_start();
         </thead>
         <tbody>
             <?php
-            foreach ($useGetEmployees as $employee) {
+            foreach ($useGetEmployeesByProject as $employee) {
                 $userId = $employee["id_usuario"];
 
                 $editUrl = "/projetosemestre/atualizarfuncionario/atualizarfuncionario.php?id_usuario=$userId";
-                $deleteUrl = "/projetosemestre/deletarfuncionario/deletarfuncionario.php?id_usuario=$userId";
 
                 echo "<tr>";
                 echo "<td>" . $employee['nome_usuario'] . "</td>";
@@ -95,7 +123,7 @@ session_start();
                 echo "<td>" . capitalize($employee['nm_estado']) . "</td>";
                 echo "<td>" . capitalize($employee['nm_sexo']) . "</td>";
                 echo "<td><a href='$editUrl'><button>Editar</button></a></td>";
-                echo "<td><a href='$deleteUrl'><button>Deletar</button></a></td>";
+                echo "<td><form action='deletarfuncionario.php' method='post'><input type='hidden' name='id_usuario' value='$userId'/><button>Deletar</button></form></td>";
                 echo "</tr>";
             }
             ?>

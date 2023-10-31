@@ -167,6 +167,7 @@ function getEmployeeById($userId)
         a.id_usuario,
         a.nome_usuario, 
         a.sobrenome_usuario, 
+        a.identificador,
         a.cpf, 
         a.rg, 
         a.dt_nascimento, 
@@ -186,5 +187,63 @@ function getEmployeeById($userId)
     $statement->execute();
 
     return $statement->fetchAll();
+}
+
+function getEmployeesByProjectName($projectName)
+{
+    global $conn;
+    global $tb_senioridade;
+    global $tb_estado;
+    global $tb_projeto;
+    global $tb_sexo;
+    global $tb_funcionario;
+
+    $sql = "select 
+    a.id_usuario,
+    a.nome_usuario, 
+    a.sobrenome_usuario, 
+    a.cpf, 
+    a.rg, 
+    a.dt_nascimento, 
+    b.nm_senioridade,
+    c.nm_projeto,
+    d.nm_estado,
+    e.nm_sexo
+    from tb_funcionario a 
+    inner join tb_senioridade b on b.id_senioridade = a.id_senioridade
+    inner join tb_projeto c on c.id_projeto = a.id_projeto
+    inner join tb_estado d on d.uf_estado = a.uf_estado
+    inner join tb_sexo e on e.fl_sexo = a.fl_sexo
+    where c.nm_projeto = '$projectName'";
+
+    $statement = $conn->prepare($sql);
+
+    $statement->execute();
+
+    return $statement->fetchAll();
+}
+
+function deleteEmployee($userId)
+{
+    global $conn;
+    global $tb_senioridade;
+    global $tb_estado;
+    global $tb_projeto;
+    global $tb_sexo;
+    global $tb_funcionario;
+
+    $sql = "delete from $tb_funcionario where id_usuario = $userId";
+
+    try {
+        $statement = $conn->prepare($sql);
+        $statement->execute();
+    } catch (Exception $err) {
+        echo "". $err->getMessage();
+    }
+    $statement = $conn->prepare($sql);
+
+    $statement->execute();
+
+    return true;
 }
 ?>

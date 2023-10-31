@@ -30,4 +30,8 @@ function getFullLastName($name)
 
     return implode(" ", $stringsAfterFirstName);
 }
+
+function randomNumber() {
+    return mt_rand(1, 1000);
+  }
 ?>
