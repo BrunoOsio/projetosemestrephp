@@ -246,4 +246,31 @@ function deleteEmployee($userId)
 
     return true;
 }
+
+function saveProject($projectName)
+{
+    global $conn;
+    global $tb_project;
+
+    $sql = "insert into tb_projeto(nm_projeto) values (:nm_projeto)";
+    $statement = $conn->prepare($sql);
+
+    $statement->bindParam(':nm_projeto', $projectName);
+
+    $statement->execute();
+
+    return true;
+}
+
+function login($username, $password) {
+    global $conn;
+
+    $sql = "select * from tb_login where nm_usuario = '$username' and nm_senha = '$password'";
+
+    $statement = $conn->prepare($sql);
+
+    $statement->execute();
+
+    return count($statement->fetchAll()) > 0 ;
+}
 ?>

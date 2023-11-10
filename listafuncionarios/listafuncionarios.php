@@ -1,5 +1,10 @@
 <?php
 session_start();
+
+if (!isset($_SESSION['user'])) {
+    header('Location: ../index.php');
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -56,10 +61,8 @@ session_start();
     require_once('../helpers/stringHelpers.php');
 
     $useGetProjects = getProjects();
-    var_dump($useGetProjects[0]["nm_projeto"]);
 
     $projectFilter = isset($_GET["projeto"]) ? $_GET["projeto"] : "todos_projetos";
-    var_dump($projectFilter);
 
     $useGetEmployeesByProject = null;
     if ($projectFilter == "todos_projetos") {
